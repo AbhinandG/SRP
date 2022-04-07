@@ -1,5 +1,5 @@
 pytube
-zipfile
+ZipFile
 TextBlob
 numpy
 pandas
