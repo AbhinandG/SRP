@@ -1,0 +1,6 @@
+pytube
+zipfile
+TextBlob
+numpy
+pandas
+streamlit==1.1.*
