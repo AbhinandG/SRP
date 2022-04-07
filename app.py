@@ -11,8 +11,6 @@ import numpy as np
 import pandas as pd
 
 
-st.write("top_secrets:",st.secrets['top_secrets']['api_key'])
-
 
 st.markdown('# **Socially Relevant Project - Automatic Video Transcript Generator**')
 
