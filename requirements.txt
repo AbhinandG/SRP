@@ -2,4 +2,9 @@ pytube
 TextBlob
 numpy
 pandas
+matplotlib
+requests
+os
+sys
+time
 streamlit==1.1.*
