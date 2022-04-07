@@ -10,6 +10,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+
+st.write("top_secrets:",st.secrets['top_secrets']['api_key'])
+
+
 st.markdown('# **Socially Relevant Project - Automatic Video Transcript Generator**')
 
 st.markdown('**Abhinand G (2019115003)**')
@@ -50,6 +54,8 @@ def transcribe_yt():
     filename = mp4_file
     bar.progress(20)
 
+
+
     def read_file(filename, chunk_size=5242880):
         with open(filename, 'rb') as _file:
             while True:
@@ -57,7 +63,7 @@ def transcribe_yt():
                 if not data:
                     break
                 yield data
-    headers = {'authorization': api_key}
+    headers = {'authorization': st.secrets['top_secrets']['api_key'] }
     response = requests.post('https://api.assemblyai.com/v2/upload',
                             headers=headers,
                             data=read_file(filename))
@@ -73,7 +79,7 @@ def transcribe_yt():
     }
 
     headers = {
-        "authorization": api_key,
+        "authorization": st.secrets['top_secrets']['api_key'],
         "content-type": "application/json"
     }
 
@@ -89,7 +95,7 @@ def transcribe_yt():
 
     endpoint = f"https://api.assemblyai.com/v2/transcript/{transcript_id}"
     headers = {
-        "authorization": api_key,
+        "authorization": st.secrets['top_secrets']['api_key'],
     }
     transcript_output_response = requests.get(endpoint, headers=headers)
 
@@ -132,7 +138,7 @@ def transcribe_yt():
     zip_file.close()
 
 
-api_key = st.secrets['api_key']
+
 
 
 
