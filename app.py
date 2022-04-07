@@ -16,13 +16,11 @@ st.markdown('**Abhinand G (2019115003)**')
 bar = st.progress(0)
 
 
-
 def get_yt(URL):
     video = YouTube(URL)
     yt = video.streams.get_audio_only()
     yt.download()
 
-    #st.info('2. Audio file has been retrieved from YouTube video')
     bar.progress(10)
 
 
