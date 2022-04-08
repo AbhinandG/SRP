@@ -1,7 +1,7 @@
 import streamlit as st
+import sys
 from pytube import YouTube
 import os
-import sys
 import time
 import requests
 from zipfile import ZipFile
@@ -21,6 +21,17 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.base import TransformerMixin 
+import pymongo
+from pymongo import MongoClient
+import pprint
+import json
+
+
+client = MongoClient('mongodb+srv://abhi:pass@cluster0.e3vf3.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+print("CONNECTION SUCCESS")
+
+db = client["myFirstDatabase"]
+collection = db["myCollection"]
 
 
 st.markdown('# **Socially Relevant Project - Automatic Video Transcript Generator**')
@@ -116,9 +127,21 @@ def sentiment_generator(transcri):
         st.error('The subjectivity score is '+str(subjectivity))
         barsubjectivity=st.progress(0)
         barsubjectivity.progress(math.floor(subjectivity*100))
+
     details={"Polarity":polarity, "Subjectivity":subjectivity}
+
     chart_data=pd.DataFrame(details,index=[0]) 
+
+    st.write("Here\'s a graph to visualise the polarity and subjectivity better - ")
+
     st.bar_chart(chart_data)
+
+    record={"file_name":fileToUpload.name, 
+            "polarity":polarity,
+            "subjectivity":subjectivity}
+
+    rec_ins=collection.insert_one(record)
+    print("Data inserted for ",rec_ins)
 
 def transcribe_yt():
     current_dir = os.getcwd()
@@ -144,7 +167,7 @@ def transcribe_yt():
     #st.info('3. YouTube audio file has been uploaded to AssemblyAI')
     bar.progress(30)
 
-    # 4. Transcribe uploaded audio file
+
     endpoint = "https://api.assemblyai.com/v2/transcript"
 
     json = {
@@ -185,21 +208,11 @@ def transcribe_yt():
     st.header('Output')
 
     st.info(transcript_output_response.json()["text"])
+
+    print("TRANSCRIPT GENERATED... GOING TO SENTIMENTS")
     sentiment_generator(transcript_output_response.json()["text"])
 
-    yt_txt = open('yt.txt', 'w')
-    yt_txt.write(transcript_output_response.json()["text"])
-    yt_txt.close()
-
-    srt_endpoint = endpoint + "/srt"
-    srt_response = requests.get(srt_endpoint, headers=headers)
-    with open("yt.srt", "w") as _file:
-        _file.write(srt_response.text)
-    
-    zip_file = ZipFile('transcription.zip', 'w')
-    zip_file.write('yt.txt')
-    zip_file.write('yt.srt')
-    zip_file.close()
+   
 
 with st.sidebar:
     st.write('**Which video do you want to analyse?**')
@@ -226,13 +239,6 @@ if submit_button:
 
     transcribe_yt()
 
-    with open("transcription.zip", "rb") as zip_download:
-        btn = st.download_button(
-            label="Download ZIP",
-            data=zip_download,
-            file_name="transcription.zip",
-            mime="application/zip"
-        )
 
 
 hide_streamlit_style = """

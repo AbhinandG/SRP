@@ -5,6 +5,7 @@ import numpy as np
 from nltk.tokenize import sent_tokenize, word_tokenize
 import nltk
 import matplotlib.pyplot as plt
+import sys
 import seaborn as sns
 import re
 from sklearn.feature_extraction.text import CountVectorizer
@@ -26,7 +27,10 @@ trainin_df=pd.read_csv('training.1600000.processed.noemoticon.csv')
 
 print("==DATASET IMPORTED==")
 
+print(trainin_df.columns)
+
 trains_df=pd.DataFrame()
+
 trains_df['content']=trainin_df.iloc[:,5]
 
 trains_df['target']=trainin_df.iloc[:,0]
