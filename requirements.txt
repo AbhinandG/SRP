@@ -4,5 +4,11 @@ numpy
 pandas
 matplotlib
 requests
-sys
+seaborn
+re
+pickle
+joblib
+nltk
+sklearn
+pymongo
 streamlit==1.1.*

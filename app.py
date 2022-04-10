@@ -115,10 +115,14 @@ def sentiment_generator(transcri):
         st.success('The video has a positive sentiment with polarity value '+str(polarity))
         barpolarity=st.progress(0)
         barpolarity.progress(math.floor(polarity*100))
+        st.text("")
+        st.text("")
     else:
         st.error('The video has a negative sentiment with polarity value '+str(polarity))
         barpolarity=st.progress(0)
         barpolarity.progress(math.floor(polarity*100))
+        st.text("")
+        st.text("")
     if subjectivity>0.5:
         st.success('The subjectivity score is '+str(subjectivity))
         barsubjectivity=st.progress(0)
@@ -127,7 +131,9 @@ def sentiment_generator(transcri):
         st.error('The subjectivity score is '+str(subjectivity))
         barsubjectivity=st.progress(0)
         barsubjectivity.progress(math.floor(subjectivity*100))
-
+    
+    st.text("")
+    st.text("")
     details={"Polarity":polarity, "Subjectivity":subjectivity}
 
     chart_data=pd.DataFrame(details,index=[0]) 
@@ -137,6 +143,7 @@ def sentiment_generator(transcri):
     st.bar_chart(chart_data)
 
     record={"file_name":fileToUpload.name, 
+            "transcript":transcri,
             "polarity":polarity,
             "subjectivity":subjectivity}
 
@@ -205,11 +212,15 @@ def transcribe_yt():
     
     bar.progress(100)
 
-    st.header('Output')
+    st.header('Generated transcripts - ')
 
     st.info(transcript_output_response.json()["text"])
 
+    st.text("")
+    st.text("")
+
     print("TRANSCRIPT GENERATED... GOING TO SENTIMENTS")
+    st.warning('Generating insights. This might take a minute or two...')
     sentiment_generator(transcript_output_response.json()["text"])
 
    
