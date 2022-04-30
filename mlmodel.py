@@ -27,7 +27,6 @@ trainin_df=pd.read_csv('training.1600000.processed.noemoticon.csv')
 
 print("==DATASET IMPORTED==")
 
-print(trainin_df.columns)
 
 trains_df=pd.DataFrame()
 
@@ -82,7 +81,12 @@ print("==SPLIT INTO X AND Y==")
 X_train, X_test, y_train, y_test = train_test_split(X,y,test_size = 0.05, random_state =26105111)
 
 vectoriser = TfidfVectorizer(ngram_range=(1,2), max_features=500000)
-vectoriser.fit(X_train)
+tfs=vectoriser.fit(X_train)
+corpus_index=[n for n in X_train]
+feature_names=vectoriser.get_feature_names()
+dfs = pd.DataFrame(tfs.todense(), index=corpus_index, columns=feature_names)
+print(dfs)
+
 print('No. of feature_words: ', len(vectoriser.get_feature_names()))
 
 

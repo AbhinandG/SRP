@@ -1,3 +1,4 @@
+from datetime import datetime
 import streamlit as st
 import sys
 from pytube import YouTube
@@ -28,7 +29,9 @@ import json
 
 
 client = MongoClient('mongodb+srv://abhi:pass@cluster0.e3vf3.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
-print("CONNECTION SUCCESS")
+
+
+print("======CONNECTED TO MONGODB DATABASE SUCCESSFULLY=======")
 
 db = client["myFirstDatabase"]
 collection = db["myCollection"]
@@ -112,7 +115,10 @@ def sentiment_generator(transcri):
     polarity=TextBlob(transcri).sentiment.polarity
     subjectivity=TextBlob(transcri).sentiment.subjectivity
     if predicted_score[0]==4:
-        st.success('The video has a positive sentiment with polarity value '+str(polarity))
+        if(polarity==0):
+            st.warning('The video has a neutral sentiment with polarity value '+str(polarity))
+        else:
+            st.success('The video has a positive sentiment with polarity value '+str(polarity))
         barpolarity=st.progress(0)
         barpolarity.progress(math.floor(polarity*100))
         st.text("")
@@ -131,21 +137,24 @@ def sentiment_generator(transcri):
         st.error('The subjectivity score is '+str(subjectivity))
         barsubjectivity=st.progress(0)
         barsubjectivity.progress(math.floor(subjectivity*100))
-    
+                                                            
     st.text("")
     st.text("")
     details={"Polarity":polarity, "Subjectivity":subjectivity}
 
     chart_data=pd.DataFrame(details,index=[0]) 
-
+    
     st.write("Here\'s a graph to visualise the polarity and subjectivity better - ")
 
     st.bar_chart(chart_data)
 
+    mydate=datetime.datetime.now()
+
     record={"file_name":fileToUpload.name, 
             "transcript":transcri,
             "polarity":polarity,
-            "subjectivity":subjectivity}
+            "subjectivity":subjectivity,
+            "timestamp": mydate}
 
     rec_ins=collection.insert_one(record)
     print("Data inserted for ",rec_ins)
@@ -248,6 +257,10 @@ if submit_button:
             f.write(fileToUpload.getbuffer())         
         st.success("File has been uploaded!")
 
+        if db.collections.count_documents({"file_name": fileToUpload.name}) != 0:
+            print("ALREADY EXISTS!!")
+
+
     transcribe_yt()
 
 
@@ -259,3 +272,5 @@ hide_streamlit_style = """
             </style>
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
+
+
