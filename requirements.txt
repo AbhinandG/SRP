@@ -8,5 +8,5 @@ seaborn
 joblib
 nltk
 sklearn
-pymongo
+pymongo[srv]
 streamlit==1.1.*
